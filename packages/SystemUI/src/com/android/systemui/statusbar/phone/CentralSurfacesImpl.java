@@ -223,6 +223,7 @@ import com.android.systemui.statusbar.policy.ConfigurationController.Configurati
 import com.android.systemui.statusbar.policy.DeviceProvisionedController;
 import com.android.systemui.statusbar.policy.DeviceProvisionedController.DeviceProvisionedListener;
 import com.android.systemui.statusbar.policy.ExtensionController;
+import com.android.systemui.statusbar.policy.FlashlightController;
 import com.android.systemui.statusbar.policy.KeyguardStateController;
 import com.android.systemui.statusbar.policy.UserInfoControllerImpl;
 import com.android.systemui.statusbar.window.StatusBarWindowControllerStore;
@@ -361,6 +362,11 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces {
     @Override
     public QSPanelController getQSPanelController() {
         return mQSPanelController;
+    }
+
+    /** */
+    public void toggleCameraFlash() {
+        mCommandQueueCallbacks.toggleCameraFlash();
     }
 
     /**
@@ -544,6 +550,7 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces {
     private boolean mIsLaunchingActivityOverLockscreen;
     private boolean mDismissingShadeForActivityLaunch;
 
+    private FlashlightController mFlashlightController;
     private final LifecycleRegistry mLifecycle = new LifecycleRegistry(this);
     protected final BatteryController mBatteryController;
     private UiModeManager mUiModeManager;
@@ -654,6 +661,7 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces {
             NavigationBarController navigationBarController,
             AccessibilityFloatingMenuController accessibilityFloatingMenuController,
             Lazy<AssistManager> assistManagerLazy,
+            FlashlightController flashlightController,
             // TODO: b/374267505 - Decouple the config change needed for shade window classes from
             //  the one for other windows.
             ConfigurationController configurationController,
@@ -763,6 +771,7 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces {
         mNavigationBarController = navigationBarController;
         mAccessibilityFloatingMenuController = accessibilityFloatingMenuController;
         mAssistManagerLazy = assistManagerLazy;
+        mFlashlightController = flashlightController;
         mConfigurationController = configurationController;
         mNotificationShadeWindowController = notificationShadeWindowController;
         mNotificationShadeWindowViewControllerLazy = notificationShadeWindowViewControllerLazy;
@@ -1866,6 +1875,10 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces {
 
         if (mLightBarController != null) {
             mLightBarController.dump(pw, args);
+        }
+
+        if (mFlashlightController != null) {
+            mFlashlightController.dump(pw, args);
         }
 
         pw.println("SharedPreferences:");

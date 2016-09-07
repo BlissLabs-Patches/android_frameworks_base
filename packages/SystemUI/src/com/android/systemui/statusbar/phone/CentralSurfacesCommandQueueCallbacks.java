@@ -70,6 +70,7 @@ import com.android.systemui.shade.domain.interactor.ShadeInteractor;
 import com.android.systemui.statusbar.CommandQueue;
 import com.android.systemui.statusbar.notification.stack.NotificationStackScrollLayoutController;
 import com.android.systemui.statusbar.policy.DeviceProvisionedController;
+import com.android.systemui.statusbar.policy.FlashlightController;
 import com.android.systemui.statusbar.notification.headsup.HeadsUpManager;
 import com.android.systemui.statusbar.policy.KeyguardStateController;
 import com.android.systemui.statusbar.policy.RemoteInputQuickSettingsDisabler;
@@ -93,6 +94,7 @@ public class CentralSurfacesCommandQueueCallbacks implements CommandQueue.Callba
     private final PanelExpansionInteractor mPanelExpansionInteractor;
     private final Lazy<ShadeInteractor> mShadeInteractorLazy;
     private final ShadeHeaderController mShadeHeaderController;
+    private final FlashlightController mFlashlightController;
     private final RemoteInputQuickSettingsDisabler mRemoteInputQuickSettingsDisabler;
     private final MetricsLogger mMetricsLogger;
     private final KeyguardUpdateMonitor mKeyguardUpdateMonitor;
@@ -140,6 +142,7 @@ public class CentralSurfacesCommandQueueCallbacks implements CommandQueue.Callba
             PanelExpansionInteractor panelExpansionInteractor,
             Lazy<ShadeInteractor> shadeInteractorLazy,
             ShadeHeaderController shadeHeaderController,
+            FlashlightController flashlightController,
             RemoteInputQuickSettingsDisabler remoteInputQuickSettingsDisabler,
             MetricsLogger metricsLogger,
             KeyguardUpdateMonitor keyguardUpdateMonitor,
@@ -171,6 +174,7 @@ public class CentralSurfacesCommandQueueCallbacks implements CommandQueue.Callba
         mPanelExpansionInteractor = panelExpansionInteractor;
         mShadeInteractorLazy = shadeInteractorLazy;
         mShadeHeaderController = shadeHeaderController;
+        mFlashlightController = flashlightController;
         mRemoteInputQuickSettingsDisabler = remoteInputQuickSettingsDisabler;
         mMetricsLogger = metricsLogger;
         mKeyguardUpdateMonitor = keyguardUpdateMonitor;
@@ -718,6 +722,13 @@ public class CentralSurfacesCommandQueueCallbacks implements CommandQueue.Callba
             String details = appLaunch ==  PowerButtonLaunchGestureTarget.LAUNCH_CAMERA_ON_GESTURE ?
                     "com.android.systemui:CAMERA_GESTURE" : "com.android.systemui:WALLET_GESTURE";
             mPowerManager.wakeUp(SystemClock.uptimeMillis(), reason, details);
+        }
+    }
+
+    @Override
+    public void toggleCameraFlash() {
+        if (mFlashlightController.isAvailable()) {
+            mFlashlightController.setFlashlight(!mFlashlightController.isEnabled());
         }
     }
 }

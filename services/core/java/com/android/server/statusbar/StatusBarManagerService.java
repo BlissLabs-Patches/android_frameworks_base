@@ -1347,6 +1347,16 @@ public class StatusBarManagerService extends IStatusBarService.Stub implements D
         return mTracingEnabled;
     }
 
+    @Override
+    public void toggleCameraFlash() {
+        if (mBar != null) {
+            try {
+                mBar.toggleCameraFlash();
+            } catch (RemoteException ex) {
+            }
+        }
+    }
+
     /**
      * Disable status bar features. Pass the bitwise-or of the {@code #DISABLE_*} flags.
      * To re-enable everything, pass {@code #DISABLE_NONE}.
