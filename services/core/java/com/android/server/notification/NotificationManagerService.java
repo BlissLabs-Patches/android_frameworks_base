@@ -369,6 +369,7 @@ import com.android.server.LocalServices;
 import com.android.server.SystemService;
 import com.android.server.job.JobSchedulerInternal;
 import com.android.server.lights.LightsManager;
+import com.android.server.lights.LogicalLight;
 import com.android.server.notification.GroupHelper.NotificationAttributes;
 import com.android.server.notification.ManagedServices.ManagedServiceInfo;
 import com.android.server.notification.ManagedServices.UserProfiles;
@@ -683,6 +684,8 @@ public class NotificationManagerService extends SystemService {
             Process.THREAD_PRIORITY_BACKGROUND);
     @FlaggedApi(Flags.FLAG_NM_BINDER_PERF_THROTTLE_EFFECTS_SUPPRESSOR_BROADCAST)
     private Handler mBroadcastsHandler;
+
+    private LogicalLight mNotificationLight;
 
     private final SparseArray<ArraySet<ComponentName>> mListenersDisablingEffects =
             new SparseArray<>();
@@ -7296,6 +7299,16 @@ public class NotificationManagerService extends SystemService {
                 Counter.logIncrementWithUid(metricId, Binder.getCallingUid());
             }
         }
+
+        @Override
+        public void forceShowLedLight(int color) {
+            forceShowLed(color);
+        }
+
+        @Override
+        public void forcePulseLedLight(int color, int onTime, int offTime) {
+            forcePulseLed(color, onTime, offTime);
+        }
     };
 
     private void handleNotificationPermissionChange(String pkg, @UserIdInt int userId) {
@@ -10281,6 +10294,24 @@ public class NotificationManagerService extends SystemService {
                 record, PendingIntent.FLAG_CANCEL_CURRENT);
         if (pi != null) {
             mAlarmManager.cancel(pi);
+        }
+    }
+
+    private void forceShowLed(int color) {
+        if (color != -1) {
+            mNotificationLight.turnOff();
+            mNotificationLight.setColor(color);
+        } else {
+            mNotificationLight.turnOff();
+        }
+    }
+
+    private void forcePulseLed(int color, int onTime, int offTime) {
+        if (color != -1) {
+            mNotificationLight.turnOff();
+            mNotificationLight.setFlashing(color, LogicalLight.LIGHT_FLASH_TIMED, onTime, offTime);
+        } else {
+            mNotificationLight.turnOff();
         }
     }
 

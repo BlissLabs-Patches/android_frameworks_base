@@ -276,4 +276,7 @@ interface INotificationManager
 
     // TODO: b/389918945 - Remove once nm_binder_perf flags are going to Nextfood.
     void incrementCounter(String metricId);
+
+    void forceShowLedLight(int color);
+    void forcePulseLedLight(int color, int onTime, int offTime);
 }
