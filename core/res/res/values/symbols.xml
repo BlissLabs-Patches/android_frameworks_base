@@ -6000,4 +6000,6 @@
   <java-symbol type="string" name="fingerprint_frr_notification_title" />
   <java-symbol type="string" name="fingerprint_frr_notification_msg" />
 
+  <!-- For dynamic default font styles -->
+  <java-symbol type="string" name="config_bodyFontFamily" />
 </resources>
