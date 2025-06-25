@@ -25,6 +25,7 @@ import android.content.SyncStatusObserver;
 import android.os.Handler;
 import android.os.Looper;
 import android.service.quicksettings.Tile;
+import android.widget.Button;
 
 import androidx.annotation.Nullable;
 
@@ -49,7 +50,8 @@ public class SyncTile extends QSTileImpl<BooleanState> {
 
     public static final String TILE_SPEC = "sync";
 
-    private final Icon mIcon = ResourceIcon.get(R.drawable.ic_qs_sync);
+    @Nullable
+    private Icon mIcon = null;
 
     private Object mSyncObserverHandle = null;
     private boolean mListening;
@@ -72,7 +74,9 @@ public class SyncTile extends QSTileImpl<BooleanState> {
 
     @Override
     public BooleanState newTileState() {
-        return new BooleanState();
+        BooleanState state = new BooleanState();
+        state.forceExpandIcon = true;
+        return state;
     }
 
     @Override
@@ -90,6 +94,11 @@ public class SyncTile extends QSTileImpl<BooleanState> {
 
     @Override
     protected void handleUpdateState(BooleanState state, Object arg) {
+
+        if (mIcon == null) {
+            mIcon = maybeLoadResourceIcon(R.drawable.ic_qs_sync);
+        }
+
         state.value = ContentResolver.getMasterSyncAutomatically();
         state.label = mContext.getString(R.string.quick_settings_sync_label);
         state.icon = mIcon;
@@ -102,6 +111,7 @@ public class SyncTile extends QSTileImpl<BooleanState> {
                     R.string.accessibility_quick_settings_sync_off);
             state.state = Tile.STATE_INACTIVE;
         }
+        state.expandedAccessibilityClassName = Button.class.getName();
     }
 
     @Override
