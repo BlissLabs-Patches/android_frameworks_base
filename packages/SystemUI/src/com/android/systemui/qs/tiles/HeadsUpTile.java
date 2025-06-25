@@ -25,6 +25,7 @@ import android.os.Looper;
 import android.provider.Settings;
 import android.provider.Settings.Global;
 import android.service.quicksettings.Tile;
+import android.widget.Button;
 
 import androidx.annotation.Nullable;
 
@@ -52,7 +53,8 @@ public class HeadsUpTile extends QSTileImpl<BooleanState> {
 
     public static final String TILE_SPEC = "heads_up";
 
-    private final Icon mIcon = ResourceIcon.get(R.drawable.ic_qs_heads_up);
+    @Nullable
+    private Icon mIcon = null;
 
     private static final Intent NOTIFICATION_SETTINGS =
             new Intent("android.settings.NOTIFICATION_SETTINGS");
@@ -87,7 +89,9 @@ public class HeadsUpTile extends QSTileImpl<BooleanState> {
 
     @Override
     public BooleanState newTileState() {
-        return new BooleanState();
+        BooleanState state = new BooleanState();
+        state.forceExpandIcon = true;
+        return state;
     }
 
     @Override
@@ -109,6 +113,11 @@ public class HeadsUpTile extends QSTileImpl<BooleanState> {
 
     @Override
     protected void handleUpdateState(BooleanState state, Object arg) {
+
+        if (mIcon == null) {
+            mIcon = maybeLoadResourceIcon(R.drawable.ic_qs_heads_up);
+        }
+
         final int value = arg instanceof Integer ? (Integer) arg : mSetting.getValue();
         final boolean headsUp = value != 0;
         state.value = headsUp;
@@ -123,6 +132,7 @@ public class HeadsUpTile extends QSTileImpl<BooleanState> {
                     R.string.accessibility_quick_settings_heads_up_off);
             state.state = Tile.STATE_INACTIVE;
         }
+        state.expandedAccessibilityClassName = Button.class.getName();
     }
 
     @Override
