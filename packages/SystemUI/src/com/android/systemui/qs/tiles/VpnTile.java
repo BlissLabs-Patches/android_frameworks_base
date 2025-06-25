@@ -66,6 +66,9 @@ public class VpnTile extends QSTileImpl<BooleanState> {
 
     public static final String TILE_SPEC = "vpn";
 
+    @Nullable
+    private Icon mIcon = null;
+
     private final SecurityController mController;
     private final KeyguardStateController mKeyguard;
     private final PanelInteractor mPanelInteractor;
@@ -94,7 +97,9 @@ public class VpnTile extends QSTileImpl<BooleanState> {
 
     @Override
     public BooleanState newTileState() {
-        return new BooleanState();
+        BooleanState state = new BooleanState();
+        state.forceExpandIcon = true;
+        return state;
     }
 
     @Override
@@ -188,11 +193,16 @@ public class VpnTile extends QSTileImpl<BooleanState> {
 
     @Override
     protected void handleUpdateState(BooleanState state, Object arg) {
+
+        if (mIcon == null) {
+            mIcon = maybeLoadResourceIcon(R.drawable.ic_qs_vpn);
+        }
+
         state.label = mContext.getString(R.string.quick_settings_vpn_label);
         state.value = mController.isVpnEnabled();
         state.secondaryLabel = mController.getPrimaryVpnName();
         state.contentDescription = state.label;
-        state.icon = ResourceIcon.get(R.drawable.ic_qs_vpn);
+        state.icon = mIcon;
         boolean hasAnyVpn = mController.getConfiguredLegacyVpns().size() > 0
                 || mController.getVpnAppPackageNames().size() > 0;
         if (mController.isVpnRestricted() || !hasAnyVpn) {
@@ -202,6 +212,7 @@ public class VpnTile extends QSTileImpl<BooleanState> {
         } else {
             state.state = Tile.STATE_INACTIVE;
         }
+        state.expandedAccessibilityClassName = Button.class.getName();
     }
 
     @Override
