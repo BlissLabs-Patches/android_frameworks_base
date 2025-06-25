@@ -24,6 +24,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
 import android.service.quicksettings.Tile;
+import android.widget.Button;
 
 import androidx.annotation.Nullable;
 
@@ -52,7 +53,8 @@ public class AODTile extends QSTileImpl<BooleanState> implements
 
     public static final String TILE_SPEC = "aod";
 
-    private final Icon mIcon = ResourceIcon.get(R.drawable.ic_qs_aod);
+    @Nullable
+    private Icon mIcon = null;
     private final BatteryController mBatteryController;
 
     private final UserSettingObserver mSetting;
@@ -107,6 +109,7 @@ public class AODTile extends QSTileImpl<BooleanState> implements
     @Override
     public BooleanState newTileState() {
         BooleanState state = new BooleanState();
+        state.forceExpandIcon = true;
         state.handlesLongClick = false;
         return state;
     }
@@ -143,6 +146,11 @@ public class AODTile extends QSTileImpl<BooleanState> implements
 
     @Override
     protected void handleUpdateState(BooleanState state, Object arg) {
+
+        if (mIcon == null) {
+            mIcon = maybeLoadResourceIcon(R.drawable.ic_qs_aod);
+        }
+
         final int value = arg instanceof Integer ? (Integer) arg : mSetting.getValue();
         final boolean enable = value != 0;
         state.icon = mIcon;
@@ -154,6 +162,7 @@ public class AODTile extends QSTileImpl<BooleanState> implements
         } else {
             state.state = enable ? Tile.STATE_ACTIVE : Tile.STATE_INACTIVE;
         }
+        state.expandedAccessibilityClassName = Button.class.getName();
     }
 
     @Override

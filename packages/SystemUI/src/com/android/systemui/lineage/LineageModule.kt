@@ -132,5 +132,20 @@ interface LineageModule {
                 category = TileCategory.DISPLAY
             )
         }
+
+        @Provides
+        @IntoMap
+        @StringKey(AODTile.TILE_SPEC)
+        fun provideAODTileConfig(uiEventLogger: QsEventLogger): QSTileConfig {
+            return QSTileConfig(
+                tileSpec = TileSpec.create(AODTile.TILE_SPEC),
+                uiConfig = QSTileUIConfig.Resource(
+                    iconRes = R.drawable.ic_qs_aod,
+                    labelRes = R.string.quick_settings_aod_label
+                ),
+                instanceId = uiEventLogger.getNewInstanceId(),
+                category = TileCategory.DISPLAY
+            )
+        }
     }
 }
