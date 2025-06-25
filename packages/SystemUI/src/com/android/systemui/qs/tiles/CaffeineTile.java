@@ -29,6 +29,7 @@ import android.os.Looper;
 import android.os.PowerManager;
 import android.os.SystemClock;
 import android.service.quicksettings.Tile;
+import android.widget.Button;
 
 import androidx.annotation.Nullable;
 
@@ -53,7 +54,8 @@ public class CaffeineTile extends QSTileImpl<BooleanState> {
 
     public static final String TILE_SPEC = "caffeine";
 
-    private final Icon mIcon = ResourceIcon.get(R.drawable.ic_qs_caffeine);
+    @Nullable
+    private Icon mIcon = null;
 
     private final PowerManager.WakeLock mWakeLock;
     private int mSecondsRemaining;
@@ -90,7 +92,9 @@ public class CaffeineTile extends QSTileImpl<BooleanState> {
 
     @Override
     public BooleanState newTileState() {
-        return new BooleanState();
+        BooleanState state = new BooleanState();
+        state.forceExpandIcon = true;
+        return state;
     }
 
     @Override
@@ -215,6 +219,11 @@ public class CaffeineTile extends QSTileImpl<BooleanState> {
 
     @Override
     protected void handleUpdateState(BooleanState state, Object arg) {
+
+        if (mIcon == null) {
+            mIcon = maybeLoadResourceIcon(R.drawable.ic_qs_caffeine);
+        }
+
         state.value = mWakeLock.isHeld();
         state.icon = mIcon;
         state.label = mContext.getString(R.string.quick_settings_caffeine_label);
@@ -230,6 +239,7 @@ public class CaffeineTile extends QSTileImpl<BooleanState> {
                     R.string.accessibility_quick_settings_caffeine_off);
             state.state = Tile.STATE_INACTIVE;
         }
+        state.expandedAccessibilityClassName = Button.class.getName();
     }
 
     private final class Receiver extends BroadcastReceiver {

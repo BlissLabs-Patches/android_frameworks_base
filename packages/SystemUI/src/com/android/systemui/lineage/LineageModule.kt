@@ -147,5 +147,20 @@ interface LineageModule {
                 category = TileCategory.DISPLAY
             )
         }
+
+        @Provides
+        @IntoMap
+        @StringKey(CaffeineTile.TILE_SPEC)
+        fun provideCaffeineConfig(uiEventLogger: QsEventLogger): QSTileConfig {
+            return QSTileConfig(
+                tileSpec = TileSpec.create(CaffeineTile.TILE_SPEC),
+                uiConfig = QSTileUIConfig.Resource(
+                    iconRes = R.drawable.ic_qs_caffeine,
+                    labelRes = R.string.quick_settings_caffeine_label
+                ),
+                instanceId = uiEventLogger.getNewInstanceId(),
+                category = TileCategory.DISPLAY
+            )
+        }
     }
 }
