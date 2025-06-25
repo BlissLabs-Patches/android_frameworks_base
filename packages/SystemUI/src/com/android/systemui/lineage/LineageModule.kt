@@ -16,6 +16,9 @@
 
 package com.android.systemui.lineage
 
+import com.android.systemui.qs.QsEventLogger
+import com.android.systemui.qs.pipeline.shared.TileSpec
+import com.android.systemui.qs.shared.model.TileCategory
 import com.android.systemui.qs.tileimpl.QSTileImpl
 import com.android.systemui.qs.tiles.AmbientDisplayTile
 import com.android.systemui.qs.tiles.AODTile
@@ -29,9 +32,14 @@ import com.android.systemui.qs.tiles.SyncTile
 import com.android.systemui.qs.tiles.UsbTetherTile
 import com.android.systemui.qs.tiles.VpnTile
 import com.android.systemui.qs.tiles.WifiTile
+import com.android.systemui.qs.tiles.base.shared.model.QSTileConfig;
+import com.android.systemui.qs.tiles.base.shared.model.QSTilePolicy;
+import com.android.systemui.qs.tiles.base.shared.model.QSTileUIConfig;
+import com.android.systemui.res.R
 
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.multibindings.IntoMap
 import dagger.multibindings.StringKey
 
@@ -108,4 +116,21 @@ interface LineageModule {
     @IntoMap
     @StringKey(WifiTile.TILE_SPEC)
     fun bindWifiTile(wifiTile: WifiTile): QSTileImpl<*>
+
+    companion object {
+        @Provides
+        @IntoMap
+        @StringKey(AmbientDisplayTile.TILE_SPEC)
+        fun provideAmbientDisplayTileConfig(uiEventLogger: QsEventLogger): QSTileConfig {
+            return QSTileConfig(
+                tileSpec = TileSpec.create(AmbientDisplayTile.TILE_SPEC),
+                uiConfig = QSTileUIConfig.Resource(
+                    iconRes = R.drawable.ic_qs_ambient_display,
+                    labelRes = R.string.quick_settings_ambient_display_label
+                ),
+                instanceId = uiEventLogger.getNewInstanceId(),
+                category = TileCategory.DISPLAY
+            )
+        }
+    }
 }

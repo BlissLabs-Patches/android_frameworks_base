@@ -28,6 +28,7 @@ import android.provider.Settings;
 import android.provider.Settings.Secure;
 import android.service.quicksettings.Tile;
 import android.text.TextUtils;
+import android.widget.Button;
 
 import androidx.annotation.Nullable;
 
@@ -55,7 +56,8 @@ public class AmbientDisplayTile extends QSTileImpl<BooleanState> {
 
     public static final String TILE_SPEC = "ambient_display";
 
-    private final Icon mIcon = ResourceIcon.get(R.drawable.ic_qs_ambient_display);
+    @Nullable
+    private Icon mIcon = null;
     private final UserSettingObserver mSetting;
 
     @Inject
@@ -101,7 +103,9 @@ public class AmbientDisplayTile extends QSTileImpl<BooleanState> {
 
     @Override
     public BooleanState newTileState() {
-        return new BooleanState();
+        BooleanState state = new BooleanState();
+        state.forceExpandIcon = true;
+        return state;
     }
 
     @Override
@@ -128,6 +132,11 @@ public class AmbientDisplayTile extends QSTileImpl<BooleanState> {
 
     @Override
     protected void handleUpdateState(BooleanState state, Object arg) {
+
+        if (mIcon == null) {
+            mIcon = maybeLoadResourceIcon(R.drawable.ic_qs_ambient_display);
+        }
+
         final int value = arg instanceof Integer ? (Integer) arg : mSetting.getValue();
         final boolean enable = value != 0;
         state.value = enable;
@@ -142,6 +151,7 @@ public class AmbientDisplayTile extends QSTileImpl<BooleanState> {
                     R.string.accessibility_quick_settings_ambient_display_off);
             state.state = Tile.STATE_INACTIVE;
         }
+        state.expandedAccessibilityClassName = Button.class.getName();
     }
 
     @Override
