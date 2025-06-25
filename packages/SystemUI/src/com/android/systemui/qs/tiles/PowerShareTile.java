@@ -28,6 +28,7 @@ import android.os.ServiceManager;
 import android.os.ServiceSpecificException;
 import android.service.quicksettings.Tile;
 import android.util.Log;
+import android.widget.Button;
 
 import androidx.annotation.Nullable;
 
@@ -56,6 +57,9 @@ public class PowerShareTile extends QSTileImpl<BooleanState>
         implements BatteryController.BatteryStateChangeCallback {
 
     public static final String TILE_SPEC = "powershare";
+
+    @Nullable
+    private Icon mIcon = null;
 
     private IPowerShare mPowerShare;
     private BatteryController mBatteryController;
@@ -149,6 +153,7 @@ public class PowerShareTile extends QSTileImpl<BooleanState>
     public BooleanState newTileState() {
         BooleanState state = new BooleanState();
         state.handlesLongClick = false;
+        state.forceExpandIcon = true;
         return state;
     }
 
@@ -186,7 +191,11 @@ public class PowerShareTile extends QSTileImpl<BooleanState>
             return;
         }
 
-        state.icon = ResourceIcon.get(R.drawable.ic_qs_powershare);
+        if (mIcon == null) {
+            mIcon = maybeLoadResourceIcon(R.drawable.ic_qs_powershare);
+        }
+
+        state.icon = mIcon;
         state.hasLongClickEffect = false;
         try {
             state.value = mPowerShare.isEnabled();
@@ -203,6 +212,7 @@ public class PowerShareTile extends QSTileImpl<BooleanState>
         } else {
             state.state = Tile.STATE_ACTIVE;
         }
+        state.expandedAccessibilityClassName = Button.class.getName();
     }
 
     @Override
