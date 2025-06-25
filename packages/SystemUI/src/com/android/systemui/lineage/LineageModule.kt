@@ -192,5 +192,20 @@ interface LineageModule {
                 category = TileCategory.UTILITIES
             )
         }
+
+        @Provides
+        @IntoMap
+        @StringKey(ReadingModeTile.TILE_SPEC)
+        fun provideReadingModeConfig(uiEventLogger: QsEventLogger): QSTileConfig {
+            return QSTileConfig(
+                tileSpec = TileSpec.create(ReadingModeTile.TILE_SPEC),
+                uiConfig = QSTileUIConfig.Resource(
+                    iconRes = R.drawable.ic_qs_reader,
+                    labelRes = R.string.quick_settings_reading_mode
+                ),
+                instanceId = uiEventLogger.getNewInstanceId(),
+                category = TileCategory.DISPLAY
+            )
+        }
     }
 }

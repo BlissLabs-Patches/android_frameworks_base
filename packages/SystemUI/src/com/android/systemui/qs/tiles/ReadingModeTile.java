@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.service.quicksettings.Tile;
+import android.widget.Button;
 
 import androidx.annotation.Nullable;
 
@@ -50,7 +51,8 @@ public class ReadingModeTile extends QSTileImpl<BooleanState> {
 
     public static final String TILE_SPEC = "reading_mode";
 
-    private final Icon mIcon = ResourceIcon.get(R.drawable.ic_qs_reader);
+    @Nullable
+    private Icon mIcon = null;
 
     private static final Intent DISPLAY_SETTINGS = new Intent("android.settings.DISPLAY_SETTINGS");
 
@@ -75,7 +77,9 @@ public class ReadingModeTile extends QSTileImpl<BooleanState> {
 
     @Override
     public BooleanState newTileState() {
-        return new BooleanState();
+        BooleanState state = new BooleanState();
+        state.forceExpandIcon = true;
+        return state;
     }
 
     @Override
@@ -97,6 +101,11 @@ public class ReadingModeTile extends QSTileImpl<BooleanState> {
 
     @Override
     protected void handleUpdateState(BooleanState state, Object arg) {
+
+        if (mIcon == null) {
+            mIcon = maybeLoadResourceIcon(R.drawable.ic_qs_reader);
+        }
+
         state.value = isReadingModeEnabled();
         state.icon = mIcon;
         if (state.value) {
@@ -109,6 +118,7 @@ public class ReadingModeTile extends QSTileImpl<BooleanState> {
             state.state = Tile.STATE_INACTIVE;
         }
         state.label = getTileLabel();
+        state.expandedAccessibilityClassName = Button.class.getName();
     }
 
     @Override
