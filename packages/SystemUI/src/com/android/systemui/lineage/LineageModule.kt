@@ -212,6 +212,21 @@ interface LineageModule {
 
         @Provides
         @IntoMap
+        @StringKey(ProfilesTile.TILE_SPEC)
+        fun provideProfileConfig(uiEventLogger: QsEventLogger): QSTileConfig {
+            return QSTileConfig(
+                tileSpec = TileSpec.create(ProfilesTile.TILE_SPEC),
+                uiConfig = QSTileUIConfig.Resource(
+                    iconRes = R.drawable.ic_qs_profiles,
+                    labelRes = R.string.quick_settings_profiles_label
+                ),
+                instanceId = uiEventLogger.getNewInstanceId(),
+                category = TileCategory.UTILITIES
+            )
+        }
+
+        @Provides
+        @IntoMap
         @StringKey(ReadingModeTile.TILE_SPEC)
         fun provideReadingModeConfig(uiEventLogger: QsEventLogger): QSTileConfig {
             return QSTileConfig(

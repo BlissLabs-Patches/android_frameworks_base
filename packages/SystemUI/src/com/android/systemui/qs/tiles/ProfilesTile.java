@@ -50,7 +50,7 @@ import com.android.systemui.dagger.qualifiers.Background;
 import com.android.systemui.dagger.qualifiers.Main;
 import com.android.systemui.plugins.ActivityStarter;
 import com.android.systemui.plugins.FalsingManager;
-import com.android.systemui.plugins.qs.QSTile.State;
+import com.android.systemui.plugins.qs.QSTile.BooleanState;
 import com.android.systemui.plugins.statusbar.StatusBarStateController;
 import com.android.systemui.qs.QSHost;
 import com.android.systemui.qs.QsEventLogger;
@@ -72,7 +72,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-public class ProfilesTile extends QSTileImpl<State> {
+public class ProfilesTile extends QSTileImpl<BooleanState> {
 
     public static final String TILE_SPEC = "profiles";
 
@@ -81,7 +81,8 @@ public class ProfilesTile extends QSTileImpl<State> {
     private static final Intent PROFILES_SETTINGS =
             new Intent("org.lineageos.lineageparts.PROFILES_SETTINGS");
 
-    private final Icon mIcon = ResourceIcon.get(R.drawable.ic_qs_profiles);
+    @Nullable
+    private Icon mIcon = null;
 
     private boolean mListening;
 
@@ -121,8 +122,10 @@ public class ProfilesTile extends QSTileImpl<State> {
     }
 
     @Override
-    public State newTileState() {
-        return new State();
+    public BooleanState newTileState() {
+        BooleanState state = new BooleanState();
+        state.forceExpandIcon = true;
+        return state;
     }
 
     @Override
@@ -161,7 +164,12 @@ public class ProfilesTile extends QSTileImpl<State> {
     }
 
     @Override
-    protected void handleUpdateState(State state, Object arg) {
+    protected void handleUpdateState(BooleanState state, Object arg) {
+
+        if (mIcon == null) {
+            mIcon = maybeLoadResourceIcon(R.drawable.ic_qs_profiles);
+        }
+
         state.icon = mIcon;
         state.label = mContext.getString(R.string.quick_settings_profiles_label);
         if (profilesEnabled()) {
@@ -176,6 +184,7 @@ public class ProfilesTile extends QSTileImpl<State> {
             state.state = Tile.STATE_INACTIVE;
         }
         state.dualTarget = true;
+        state.expandedAccessibilityClassName = Button.class.getName();
     }
 
     private void setProfilesEnabled(Boolean enabled) {
