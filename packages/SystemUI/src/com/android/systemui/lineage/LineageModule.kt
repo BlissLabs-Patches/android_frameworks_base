@@ -16,6 +16,8 @@
 
 package com.android.systemui.lineage
 
+import android.content.Context
+
 import com.android.systemui.qs.QsEventLogger
 import com.android.systemui.qs.pipeline.shared.TileSpec
 import com.android.systemui.qs.shared.model.TileCategory
@@ -165,6 +167,21 @@ interface LineageModule {
 
         @Provides
         @IntoMap
+        @StringKey(CellularTile.TILE_SPEC)
+        fun provideCellularTileConfig(uiEventLogger: QsEventLogger): QSTileConfig {
+            return QSTileConfig(
+                tileSpec = TileSpec.create(CellularTile.TILE_SPEC),
+                uiConfig = QSTileUIConfig.Resource(
+                    iconRes = R.drawable.ic_swap_vert,
+                    labelRes = R.string.quick_settings_cellular_detail_title
+                ),
+                instanceId = uiEventLogger.getNewInstanceId(),
+                category = TileCategory.CONNECTIVITY
+            )
+        }
+
+        @Provides
+        @IntoMap
         @StringKey(HeadsUpTile.TILE_SPEC)
         fun provideHeadsUpConfig(uiEventLogger: QsEventLogger): QSTileConfig {
             return QSTileConfig(
@@ -251,6 +268,23 @@ interface LineageModule {
                 instanceId = uiEventLogger.getNewInstanceId(),
                 category = TileCategory.CONNECTIVITY
             )
+        }
+
+        @Provides
+        @IntoMap
+        @StringKey(WifiTile.TILE_SPEC)
+        fun provideWifiTileConfig(uiEventLogger: QsEventLogger, context: Context): QSTileConfig {
+            return QSTileConfig(
+                tileSpec = TileSpec.create(WifiTile.TILE_SPEC),
+		uiConfig = QSTileUIConfig.Resource(
+                    iconRes = context.resources.getIdentifier(
+                        "ic_signal_wifi_transient_animation", "drawable", "android"
+                    ),
+                    labelRes = R.string.quick_settings_wifi_label
+                ),
+                instanceId = uiEventLogger.getNewInstanceId(),
+                category = TileCategory.CONNECTIVITY
+            )                       
         }
     }
 }
