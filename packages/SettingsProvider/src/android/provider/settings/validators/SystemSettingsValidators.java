@@ -273,6 +273,5 @@ public class SystemSettingsValidators {
         VALIDATORS.put(System.PREFERRED_REGION, ANY_STRING_VALIDATOR);
         VALIDATORS.put(System.CV_ENABLED,
                 new InclusiveIntegerRangeValidator(0, 1));
-        VALIDATORS.put(System.TOUCHSCREEN_GESTURE_HAPTIC_FEEDBACK, BOOLEAN_VALIDATOR);
     }
 }
